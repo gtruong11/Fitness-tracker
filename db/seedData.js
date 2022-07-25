@@ -19,6 +19,12 @@ async function createTables() {
         name VARCHAR(255) NOT NULL,
         active BOOLEAN DEFAULT true
       );
+      CREATE TABLE activity (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        active BOOLEAN DEFAULT true
+      );
         
       `);
 

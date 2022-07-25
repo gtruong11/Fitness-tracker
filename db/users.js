@@ -4,6 +4,7 @@ const client = require("./client");
 
 // user functions
 async function createUser({ username, password, name }) {
+  // eslint-disable-next-line no-useless-catch
   try {
     const {
       rows: [user],
