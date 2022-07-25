@@ -39,6 +39,14 @@ async function createTables() {
         name VARCHAR(255) UNIQUE NOT NULL,
         goal TEXT NOT NULL
       );
+      CREATE TABLE routine_activities (
+        id SERIAL PRIMARY KEY,
+        routineId INTEGER REFERENCES routines(id),
+        activityId INTEGER REFERENCES activities(id),
+        duration INTEGER,
+        count INTEGER,
+        UNIQUE("routineId", "activityId")
+      );
       `);
 
     console.log("Finished building tables!");
