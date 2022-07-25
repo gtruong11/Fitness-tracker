@@ -8,8 +8,25 @@ async function dropTables() {
 }
 
 async function createTables() {
-  console.log("Starting to build tables...")
-  // create all tables, in the correct order
+  try {
+    console.log("Starting to build tables...");
+
+    await client.query(`
+      CREATE TABLE users (
+        id SERIAL PRIMARY KEY,
+        username varchar(255) UNIQUE NOT NULL,
+        password varchar(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        active BOOLEAN DEFAULT true
+      );
+        
+      `);
+
+    console.log("Finished building tables!");
+  } catch (error) {
+    console.error("Error building tables!");
+    throw error;
+  }
 }
 
 /* 
