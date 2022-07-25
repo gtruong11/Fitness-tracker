@@ -69,7 +69,7 @@ async function updateActivity({ id, ...fields }) {
     // update any fields that need to be updated
     if (setString.length > 0) {
       await client.query(`
-        UPDATE posts
+        UPDATE activities
         SET ${ setString }
         WHERE id=${ id }
         RETURNING *;
