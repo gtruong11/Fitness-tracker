@@ -35,7 +35,7 @@ async function getActivityById(id) {
   try{
     const {rows:[activities] } = await client.query(`
     SELECT id, name, description
-    FROM users
+    FROM activities
     WHERE id =${id};
     `);
     if (!activities) {
@@ -48,7 +48,21 @@ async function getActivityById(id) {
 }
 
 
-async function getActivityByName(name) {}
+async function getActivityByName(name) {
+  try {
+    const {rows:[activites]} = await client.query(`
+    SELECT *
+    FROM activities
+    WHERE name=$1;
+    `, [name]);
+    if (!activites) {
+      return null
+    }
+    return activites;
+  }catch (error) {
+    throw(error)
+  }
+}
 
 async function attachActivitiesToRoutines(routines) {}
 
