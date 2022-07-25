@@ -3,21 +3,22 @@ const client = require("./client");
 // database functions
 
 // user functions
-async function createUser({ username, password, name }) {
+async function createUser({ username, password }) {
   // eslint-disable-next-line no-useless-catch
+  console.log("starting createUser")
   try {
     const {
       rows: [user],
     } = await client.query(
       `
-      INSERT INTO users(username, password, name) 
-      VALUES($1, $2, $3) 
+      INSERT INTO users(username, password) 
+      VALUES($1, $2) 
       ON CONFLICT (username) DO NOTHING 
       RETURNING *;
     `,
-      [username, password, name]
+      [username, password]
     );
-
+      console.log("finished creating users")
     return user;
   } catch (error) {
     throw error;

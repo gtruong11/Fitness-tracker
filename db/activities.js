@@ -5,7 +5,7 @@ const client = require("./client");
 async function createActivity({ name, description }) {
   try {
     const { rows: [activities] } = await client.query(`
-      INSERT INTO activity(name, description) 
+      INSERT INTO activities(name, description) 
       VALUES($1, $2) 
       RETURNING *;
     `, [name,description]);
