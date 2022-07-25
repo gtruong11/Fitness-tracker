@@ -1,5 +1,5 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const { createUser, createActivity, createRoutine, addActivityToRoutine, getAllActivities  } = require('./');
+const { createUser, createActivity, createRoutine, addActivityToRoutine, getAllActivities, getRoutinesWithoutActivities  } = require('./');
 const client = require("./client")
 
 async function dropTables() {
@@ -156,8 +156,10 @@ async function createInitialRoutineActivities() {
   console.log("starting to create routine_activities...")
   const [bicepRoutine, chestRoutine, legRoutine, cardioRoutine] =
     await getRoutinesWithoutActivities()
+    console.log("Finsihed getRoutinesWithoutActivities")
   const [bicep1, bicep2, chest1, chest2, leg1, leg2, leg3] =
     await getAllActivities()
+    console.log("Finished getAllActivities")
 
   const routineActivitiesToCreate = [
     {
@@ -215,6 +217,7 @@ async function createInitialRoutineActivities() {
       duration: 15,
     },
   ]
+  console.log("Created tables")
   const routineActivities = await Promise.all(
     routineActivitiesToCreate.map(addActivityToRoutine)
   )

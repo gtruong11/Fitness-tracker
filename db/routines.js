@@ -15,9 +15,37 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 }
 
 
-async function getRoutineById(id) {}
+async function getRoutineById(id) {
+  try{
+    const {rows:[routine] } = await client.query(`
+    SELECT id, creatorId, isPublic, name, goal
+    FROM routines
+    WHERE id =${id};
+    `);
+    if (!routine) {
+        return null
+    }   
+    return routine;
+} catch (error){
+    throw(error)
+}
+}
 
-async function getRoutinesWithoutActivities() {}
+async function getRoutinesWithoutActivities() {
+
+  try {
+    const { rows } = await client.query(`
+    SELECT *
+    FROM routines
+    `);
+    if (!rows) {
+      return null
+    }
+    return rows
+  } catch (error) {
+    throw(error)
+  }
+}
 
 async function getAllRoutines() {}
 
