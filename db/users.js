@@ -18,12 +18,13 @@ const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
       INSERT INTO users(username, password) 
       VALUES($1, $2) 
       ON CONFLICT (username) DO NOTHING 
-      RETURNING *;
+      RETURNING id, username;
     `,
-      [username, password]
+      [username, hashedPassword]
     );
-      console.log("finished creating users")
-    return user, hashedPassword;
+   
+      console.log( "finished creating users")
+    return user
   } catch (error) {
     throw error;
   }
@@ -33,11 +34,12 @@ async function getUser({ username, password }) {
   const user = await getUserByUsername(username);
   const hashedPassword = user.password;
   const isValid = await bcrypt.compare(password, hashedPassword)
-  if(hashedPassword == isValid){
-    return true
+  if(!isValid){
+    return false
+  }else{
+    delete user.password
   }
-  return false
-
+return user
 }
 
 async function getUserById(userId) {
@@ -61,7 +63,7 @@ async function getUserById(userId) {
 async function getUserByUsername(userName) {
   try{
     const {rows: [user]} = await client.query(`
-    SELECT * 
+    SELECT *
     FROM users
     WHERE username =$1;
 
