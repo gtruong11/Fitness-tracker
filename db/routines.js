@@ -1,5 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-useless-catch */
+const { attachActivitiesToRoutines } = require("./activities");
 const client = require("./client");
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
@@ -40,7 +40,7 @@ async function getRoutinesWithoutActivities() {
   try {
     const { rows } = await client.query(`
     SELECT *
-    FROM routines
+    FROM routines;
     `);
     if (!rows) {
       return null
@@ -53,13 +53,33 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-    
+    const{rows: routines} = await client.query(`
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id 
+    `);
+    const allRoutines = attachActivitiesToRoutines(routines)
+    return allRoutines 
   } catch (error) {
     throw (error)
-  }
+  } 
 }
 
-async function getAllPublicRoutines() {}
+async function getAllPublicRoutines() {
+  try {
+    const{rows: routines} = await client.query(`
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id 
+    WHERE "isPublic" = true
+    `);
+    const allRoutines = attachActivitiesToRoutines(routines)
+    return allRoutines 
+  } catch (error) {
+    throw (error)
+  } 
+}
+
 
 async function getAllRoutinesByUser({ username }) {}
 
