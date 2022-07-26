@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-catch */
+const { query } = require("express");
 const client = require("./client");
 
 //
@@ -41,15 +42,12 @@ async function getRoutineActivityById(id) {
 async function getRoutineActivitiesByRoutine({ id }) {
   console.log(id, "WHAT IS THIS?")
   try{
-    const {rows:[routineactivity] } = await client.query(`
-    SELECT id, "routineId", "activityId", count, duration
+    const {rows } = await client.query(`
+    SELECT *
     FROM routine_activities
     WHERE "routineId" =${id};
     `);
-    if (!routineactivity) {
-        return null
-    }   
-    return routineactivity;
+    return rows;
 } catch (error){
     throw(error)
 }
@@ -88,7 +86,15 @@ async function destroyRoutineActivity(id) {
   }
 }
 
-async function canEditRoutineActivity(routineActivityId, userId) {}
+async function canEditRoutineActivity(routineActivityId, userId) {
+  const{rows: [routineActivity]} = await client.query(`
+  SELECT * FROM routine_activities
+  JOIN routines ON routine_activities."routineId" = routines.id
+  AND routine_activities.id = $1
+  `,[routineActivityId])
+  return routineActivity.creatorId === userId, console.log(routineActivity,"show me the money")
+};
+ 
 
 module.exports = {
   getRoutineActivityById,
