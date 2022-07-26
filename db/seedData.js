@@ -1,21 +1,28 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
-const { createUser, createActivity, createRoutine, addActivityToRoutine, getAllActivities, getRoutinesWithoutActivities, attachActivitiesToRoutines  } = require('./');
-const client = require("./client")
+const {
+  createUser,
+  createActivity,
+  createRoutine,
+  addActivityToRoutine,
+  getAllActivities,
+  getRoutinesWithoutActivities,
+} = require("./");
+const client = require("./client");
 
 async function dropTables() {
   try {
-  console.log("Dropping All Tables...")
- await client.query(`
+    console.log("Dropping All Tables...");
+    await client.query(`
     DROP TABLE IF EXISTS routine_activities;
     DROP TABLE IF EXISTS routines;
     DROP TABLE IF EXISTS activities;
     DROP TABLE IF EXISTS users;
- `) 
- console.log("Finished dropping tables!")
-} catch(error) {
-  console.error("Error dropping tables!")
-  throw error;
-}
+ `);
+    console.log("Finished dropping tables!");
+  } catch (error) {
+    console.error("Error dropping tables!");
+    throw error;
+  }
 }
 
 async function createTables() {
@@ -64,26 +71,26 @@ DO NOT CHANGE ANYTHING BELOW. This is default seed data, and will help you start
 */
 
 async function createInitialUsers() {
-  console.log("Starting to create users...")
+  console.log("Starting to create users...");
   try {
     const usersToCreate = [
       { username: "albert", password: "bertie99" },
       { username: "sandra", password: "sandra123" },
       { username: "glamgal", password: "glamgal123" },
-    ]
-    const users = await Promise.all(usersToCreate.map(createUser))
+    ];
+    const users = await Promise.all(usersToCreate.map(createUser));
 
-    console.log("Users created:")
-    console.log(users)
-    console.log("Finished creating users!")
+    console.log("Users created:");
+    console.log(users);
+    console.log("Finished creating users!");
   } catch (error) {
-    console.error("Error creating users!")
-    throw error
+    console.error("Error creating users!");
+    throw error;
   }
 }
 async function createInitialActivities() {
   try {
-    console.log("Starting to create activities...")
+    console.log("Starting to create activities...");
 
     const activitiesToCreate = [
       {
@@ -103,21 +110,23 @@ async function createInitialActivities() {
       { name: "squats", description: "Heavy lifting." },
       { name: "treadmill", description: "running" },
       { name: "stairs", description: "climb those stairs" },
-    ]
-    const activities = await Promise.all(activitiesToCreate.map(createActivity))
+    ];
+    const activities = await Promise.all(
+      activitiesToCreate.map(createActivity)
+    );
 
-    console.log("activities created:")
-    console.log(activities)
+    console.log("activities created:");
+    console.log(activities);
 
-    console.log("Finished creating activities!")
+    console.log("Finished creating activities!");
   } catch (error) {
-    console.error("Error creating activities!")
-    throw error
+    console.error("Error creating activities!");
+    throw error;
   }
 }
 
 async function createInitialRoutines() {
-  console.log("starting to create routines...")
+  console.log("starting to create routines...");
 
   const routinesToCreate = [
     {
@@ -144,22 +153,22 @@ async function createInitialRoutines() {
       name: "Cardio Day",
       goal: "Running, stairs. Stuff that gets your heart pumping!",
     },
-  ]
+  ];
   const routines = await Promise.all(
     routinesToCreate.map((routine) => createRoutine(routine))
-  )
-  console.log("Routines Created: ", routines)
-  console.log("Finished creating routines.")
+  );
+  console.log("Routines Created: ", routines);
+  console.log("Finished creating routines.");
 }
 
 async function createInitialRoutineActivities() {
-  console.log("starting to create routine_activities...")
+  console.log("starting to create routine_activities...");
   const [bicepRoutine, chestRoutine, legRoutine, cardioRoutine] =
-    await getRoutinesWithoutActivities()
-    console.log("Finsihed getRoutinesWithoutActivities")
+    await getRoutinesWithoutActivities();
+  console.log("Finsihed getRoutinesWithoutActivities");
   const [bicep1, bicep2, chest1, chest2, leg1, leg2, leg3] =
-    await getAllActivities()
-    console.log("Finished getAllActivities")
+    await getAllActivities();
+  console.log("Finished getAllActivities");
 
   const routineActivitiesToCreate = [
     {
@@ -216,26 +225,26 @@ async function createInitialRoutineActivities() {
       count: 10,
       duration: 15,
     },
-  ]
-  console.log("Created tables")
+  ];
+  console.log("Created tables");
   const routineActivities = await Promise.all(
     routineActivitiesToCreate.map(addActivityToRoutine)
-  )
-  console.log("routine_activities created: ", routineActivities)
-  console.log("Finished creating routine_activities!")
+  );
+  console.log("routine_activities created: ", routineActivities);
+  console.log("Finished creating routine_activities!");
 }
 
 async function rebuildDB() {
   try {
-    await dropTables()
-    await createTables()
-    await createInitialUsers()
-    await createInitialActivities()
-    await createInitialRoutines()
-    await createInitialRoutineActivities()
+    await dropTables();
+    await createTables();
+    await createInitialUsers();
+    await createInitialActivities();
+    await createInitialRoutines();
+    await createInitialRoutineActivities();
   } catch (error) {
-    console.log("Error during rebuildDB")
-    throw error
+    console.log("Error during rebuildDB");
+    throw error;
   }
 }
 
@@ -243,4 +252,4 @@ module.exports = {
   rebuildDB,
   dropTables,
   createTables,
-}
+};
