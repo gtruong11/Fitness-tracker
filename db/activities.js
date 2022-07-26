@@ -81,16 +81,12 @@ async function attachActivitiesToRoutines(routines) {
 }
 
 async function updateActivity({ id, ...fields }) {
-  // don't try to update the id
-  // do update the name and description
-  // return the updated activity
 
   const setString = Object.keys(fields).map(
     (key, index) => `"${ key }"=$${ index + 1 }`
   ).join(', ');
 
   try {
-    // update any fields that need to be updated
     if (setString.length > 0) {
       await client.query(`
         UPDATE activities
