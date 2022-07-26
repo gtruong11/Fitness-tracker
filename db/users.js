@@ -9,7 +9,6 @@ async function createUser({ username, password }) {
   const SALT_COUNT = 10;
 
 const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
-  console.log("starting createUser")
   try {
     const {
       rows: [user],
@@ -22,8 +21,7 @@ const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
     `,
       [username, hashedPassword]
     );
-   
-      console.log( "finished creating users")
+  
     return user
   } catch (error) {
     throw error;

@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-useless-catch */
 const client = require("./client");
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {

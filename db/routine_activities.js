@@ -1,5 +1,4 @@
 /* eslint-disable no-useless-catch */
-const { query } = require("express");
 const client = require("./client");
 
 //
@@ -40,7 +39,6 @@ async function getRoutineActivityById(id) {
 }
 
 async function getRoutineActivitiesByRoutine({ id }) {
-  console.log(id, "WHAT IS THIS?")
   try{
     const {rows } = await client.query(`
     SELECT *
@@ -92,7 +90,13 @@ async function canEditRoutineActivity(routineActivityId, userId) {
   JOIN routines ON routine_activities."routineId" = routines.id
   AND routine_activities.id = $1
   `,[routineActivityId])
-  return routineActivity.creatorId === userId, console.log(routineActivity,"show me the money")
+
+  if (routineActivity.creatorId === userId) {
+    return routineActivity
+  } else {
+    return false
+  }
+  // return routineActivity.creatorId === userId, console.log(routineActivity,"show me the money")
 };
  
 
