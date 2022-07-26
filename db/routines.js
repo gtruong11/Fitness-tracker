@@ -112,7 +112,23 @@ async function getPublicRoutinesByUser({ username }) {
   } 
 }
 
-async function getPublicRoutinesByActivity({ id }) {}
+async function getPublicRoutinesByActivity({ id }) {
+  try{
+  const{rows: routines} = await client.query(`
+  SELECT routines.*, users.username AS "creatorName"
+  FROM routines
+  JOIN users ON routines."creatorId" = users.id 
+  JOIN routine_activities ON routine_activities."routineId" = routines.id
+  WHERE routines."isPublic" = true
+  AND routine_activities."activityId" =$1;
+  `, [id]);
+  const allRoutines = attachActivitiesToRoutines(routines)
+  return allRoutines 
+} catch (error) {
+  throw (error)
+} 
+}
+
 
 async function updateRoutine({ id, ...fields }) {
   const setString = Object.keys(fields).map(
