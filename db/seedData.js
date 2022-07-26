@@ -233,7 +233,6 @@ async function rebuildDB() {
     await createInitialActivities()
     await createInitialRoutines()
     await createInitialRoutineActivities()
-    await attachActivitiesToRoutines()
   } catch (error) {
     console.log("Error during rebuildDB")
     throw error
