@@ -64,7 +64,21 @@ async function getActivityByName(name) {
   }
 }
 
-async function attachActivitiesToRoutines(routines) {}
+async function attachActivitiesToRoutines(routines) {
+  console.log("TRY STATEMENT STARTED")
+  try {
+    console.log("BEFORE QUERY")
+    const {rows:[data]} = await client.query(`
+      SELECT 
+      FROM activities
+      FULL JOIN routines.id ON acitivities.id  
+    `, [routines]);
+    console.log(data, "THIS IS OUR DATA")
+    return data
+  } catch (error) {
+    throw (error)
+  }
+}
 
 async function updateActivity({ id, ...fields }) {
   // don't try to update the id

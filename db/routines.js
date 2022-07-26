@@ -49,7 +49,13 @@ async function getRoutinesWithoutActivities() {
   }
 }
 
-async function getAllRoutines() {}
+async function getAllRoutines() {
+  try {
+    
+  } catch (error) {
+    throw (error)
+  }
+}
 
 async function getAllPublicRoutines() {}
 
