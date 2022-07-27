@@ -104,10 +104,14 @@ usersRouter.post('/login', async (req, res, next) => {
 });
 
 // GET /api/users/me
-usersRouter.get("/me", getUserById, async (req,res,next)=>{
+usersRouter.get("/me", async(req,res,next)=>{
+  
+  console.log ("Starting Try block line 109")
   try{
+    const user = await getUser({username,password})
+    console.log(user, "line")
     
-    res.send(req.user)
+    res.send(user)
   }catch (error){
     next(error)
   }
