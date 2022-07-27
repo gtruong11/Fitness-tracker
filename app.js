@@ -19,5 +19,14 @@ app.use((req, res, next) => {
 
 
 app.use("/api", router)
+app.use((error, req, res, next) => {
+  res.send({
+    error: error.error,
+    message: error.message,
+    name: error.name
+    
+  });
+});
+
 
 module.exports = app;

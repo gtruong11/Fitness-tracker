@@ -50,12 +50,12 @@ router.use(async (req, res, next) => {
     next();
   });
   
-  router.use((error, req, res, next) => {
-    res.send({
-      name: error.name,
-      message: error.message,
-    });
-  });
+  // router.use((error, req, res, next) => {
+  //   res.send({
+  //     name: error.name,
+  //     message: error.message,
+  //   });
+  // });
 
 
 
