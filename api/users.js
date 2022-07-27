@@ -6,12 +6,9 @@ const {
   createUser,
   getUserByUsername,
   getUser,
-  getUserById,
   getPublicRoutinesByUser,
   getAllRoutinesByUser,
 } = require("../db");
-const bcrypt = require("bcrypt");
-const { router } = require("../app");
 const { requireUser } = require("./utils");
 
 // POST /api/users/register
