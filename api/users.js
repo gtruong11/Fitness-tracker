@@ -116,20 +116,22 @@ usersRouter.get("/me", requireUser, async (req, res, next) => {
 usersRouter.get("/:username/routines", requireUser, async (req, res, next) => {
   const { username } = req.params;
   const user = await getUserByUsername(username)
-  console.log(username, req.params, "WE NEED THIS");
   try {
-    console.log("line 121")
-    const publicList = await getPublicRoutinesByUser(username);
-    const fullList = await getAllRoutinesByUser(username);
-    console.log(publicList, fullList, user, "I NEED ALL OF THESE THINGS")
+  
     if (!user) {
       next({
         name: "NoUser",
         message: `User ${username} does not exist`
       })
+      
+    } else if(user.id == req.user.id ){
+     
+      const fullList = await getAllRoutinesByUser({username: username})
+      res.send(fullList)
+    } else{
+      const publicList = await getPublicRoutinesByUser({username: username})
+      res.send(publicList)
     }
-
-    res.send(publicList, fullList);
   } catch (error) {
     throw error;
   }
