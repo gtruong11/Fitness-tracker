@@ -25,7 +25,7 @@ activitiesRouter.get("/", async (req, res, next) => {
 // GET /api/activities/:activityId/routines
 activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
   const { id } = req.activities;
-  const allActivities = await getPublicRoutinesByActivity({ id });
+  const allActivities = await getPublicRoutinesByActivity( id );
   try {
     res.send(allActivities);
   } catch (error) {
