@@ -31,8 +31,8 @@ router.use(async (req, res, next) => {
           req.user = await getUserById(id);
           next();
         }
-      } catch ({ name, message }) {
-        next({ name, message });
+      } catch (error) {
+        next(error);
       }
     } else {
       next({
@@ -43,22 +43,12 @@ router.use(async (req, res, next) => {
   });
 
   router.use((req, res, next) => {
-    if (req.user && user.active) {
+    if (req.user) {
       console.log("User is set:", req.user);
     }
   
     next();
   });
-  
-  // router.use((error, req, res, next) => {
-  //   res.send({
-  //     name: error.name,
-  //     message: error.message,
-  //   });
-  // });
-
-
-
 
 router.use('/users', usersRouter);
 router.use('/activities', activitiesRouter);

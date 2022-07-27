@@ -2,9 +2,17 @@
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const { createUser, getUserByUsername, getUser, getUserById } = require("../db");
+const {
+  createUser,
+  getUserByUsername,
+  getUser,
+  getUserById,
+  getPublicRoutinesByUser,
+  getAllRoutinesByUser,
+} = require("../db");
 const bcrypt = require("bcrypt");
 const { router } = require("../app");
+const { requireUser } = require("./utils");
 
 // POST /api/users/register
 usersRouter.post("/register", async (req, res, next) => {
@@ -14,21 +22,18 @@ usersRouter.post("/register", async (req, res, next) => {
     const _user = await getUserByUsername(username);
 
     if (_user) {
-      res.status(401)
+      res.status(401);
       next({
-        error: "401",
         message: `User ${username} is already taken.`,
-        name: "useralreadyexists"
-        
+        name: "useralreadyexists",
       });
     }
 
     if (password.length < 8) {
-      res.status(401)
+      res.status(401);
       next({
-        error: "401",
         message: "Password Too Short!",
-        name: "PasswordtooShort"
+        name: "PasswordtooShort",
       });
     }
 
@@ -36,14 +41,6 @@ usersRouter.post("/register", async (req, res, next) => {
       username,
       password,
     });
-
-    // if (!user) {
-    //   res.status(401)
-    //   next({
-    //     name: "UserCreateError",
-    //     message: "Error creating user",
-    //   });
-    // }
 
     const token = jwt.sign(
       {
@@ -60,63 +57,81 @@ usersRouter.post("/register", async (req, res, next) => {
       user,
       message: "thank you for signing up",
       token,
-  
     });
-  } catch ( error ) {
-    next( error);
+  } catch (error) {
+    next(error);
   }
 });
 // POST /api/users/login
 
-usersRouter.post('/login', async (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-  
- 
+
   if (!username || !password) {
     next({
       name: "MissingCredentialsError",
-      message: "Please supply both a username and password"
+      message: "Please supply both a username and password",
     });
   }
 
   try {
-    const user = await getUser({username,password})
-    
+    const user = await getUser({ username, password });
+
     if (user) {
-      const token = jwt.sign({ 
-        id: user.id, 
-        username: user.username
-      }, process.env.JWT_SECRET, {
-        expiresIn: '1w'
-      });
-      
-      res.send({ user, message: "you're logged in!", token});
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "1w",
+        }
+      );
+
+      res.send({ user, message: "you're logged in!", token });
     } else {
-      next({ 
-        name: 'IncorrectCredentialsError', 
-        message: 'Username or password is incorrect'
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or password is incorrect",
       });
     }
-  } catch(error) {
+  } catch (error) {
     console.log(error);
     next(error);
   }
 });
 
 // GET /api/users/me
-usersRouter.get("/me", async(req,res,next)=>{
-  
-  console.log ("Starting Try block line 109")
-  try{
-    const user = await getUser({username,password})
-    console.log(user, "line")
-    
-    res.send(user)
-  }catch (error){
-    next(error)
+usersRouter.get("/me", requireUser, async (req, res, next) => {
+  console.log(req.user, "THIS IS THE BODY");
+  try {
+    res.send(req.user);
+  } catch (error) {
+    next(error);
   }
-})
+});
 
 // GET /api/users/:username/routines
+usersRouter.get("/:username/routines", requireUser, async (req, res, next) => {
+  const { username } = req.params;
+  const user = await getUserByUsername(username)
+  console.log(username, req.params, "WE NEED THIS");
+  try {
+    console.log("line 121")
+    const publicList = await getPublicRoutinesByUser(username);
+    const fullList = await getAllRoutinesByUser(username);
+    console.log(publicList, fullList, user, "I NEED ALL OF THESE THINGS")
+    if (!user) {
+      next({
+        name: "NoUser",
+        message: `User ${username} does not exist`
+      })
+    }
 
+    res.send(publicList, fullList);
+  } catch (error) {
+    throw error;
+  }
+});
 module.exports = usersRouter;

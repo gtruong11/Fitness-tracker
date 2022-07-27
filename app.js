@@ -21,7 +21,7 @@ app.use((req, res, next) => {
 app.use("/api", router)
 app.use((error, req, res, next) => {
   res.send({
-    error: error.error,
+    error: error.message,
     message: error.message,
     name: error.name
     
