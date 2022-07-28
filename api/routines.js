@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPublicRoutines, createRoutine, getRoutineById, updateRoutine, getUserByUsername, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine } = require('../db');
+const { getAllPublicRoutines, createRoutine, getRoutineById, updateRoutine, getUserByUsername, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine, getRoutineActivityById } = require('../db');
 const { UserDoesNotExistError } = require('../errors');
 const routinesRouter = express.Router();
 const {requireUser} = require('./utils')
@@ -82,16 +82,16 @@ routinesRouter.post('/:routineId/activities', async (req,res,next)=>{
     const {routineId } = req.params
     const {activityId, count, duration} = req.body
     console.log(routineId, activityId, count, duration, "THIS ONE")
+    const checkActivityId = await getRoutineActivityById(activityId)
     try {
-        if(routineId && activityId){
+        if(checkActivityId){
+            next({
+                name: "issue found",
+                message: `Activity ID ${activityId} already exists in Routine ID ${routineId}`
+            })
+    }else{
         const newRoutine = await addActivityToRoutine({routineId, activityId, count, duration})
         res.send(newRoutine)
-
-    }else{
-        next({
-            name: "issue found",
-            message: `Activity ID ${activityId} already exists in that Routine ID ${routineId}`
-        })
     }
 } catch(error) {
         next(error)
