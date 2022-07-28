@@ -79,14 +79,21 @@ routinesRouter.delete('/:routineId', requireUser, async (req,res,next)=>{
 
 // POST /api/routines/:routineId/activities
 routinesRouter.post('/:routineId/activities', async (req,res,next)=>{
-    const routineId = Number(req.params.routineId)
+    const {routineId } = req.params
     const {activityId, count, duration} = req.body
     console.log(routineId, activityId, count, duration, "THIS ONE")
-    const obj = {routineId:routineId, activityId:activityId, count:count, duration:duration}
     try {
-        const newRoutine = await addActivityToRoutine(obj)
+        if(routineId && activityId){
+        const newRoutine = await addActivityToRoutine({routineId, activityId, count, duration})
         res.send(newRoutine)
-    } catch(error) {
+
+    }else{
+        next({
+            name: "issue found",
+            message: `Activity ID ${activityId} already exists in that Routine ID ${routineId}`
+        })
+    }
+} catch(error) {
         next(error)
     }
 })
