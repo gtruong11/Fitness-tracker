@@ -12,11 +12,10 @@ const { requireUser } = require("./utils");
 
 // GET /api/activities
 activitiesRouter.get("/", async (req, res, next) => {
-  console.log("outside try");
+  
   try {
-    console.log("inside try");
+   
     const activities = await getAllActivities();
-    console.log(activities, "Show me the money 14");
     res.send(activities);
   } catch (error) {
     next(error);
@@ -24,10 +23,19 @@ activitiesRouter.get("/", async (req, res, next) => {
 });
 // GET /api/activities/:activityId/routines
 activitiesRouter.get("/:activityId/routines", async (req, res, next) => {
-  const { id } = req.activities;
-  const allActivities = await getPublicRoutinesByActivity( id );
+  const {activityId} = req.params
+  const allActivities = await getPublicRoutinesByActivity( {id: req.params.activityId} );
   try {
-    res.send(allActivities);
+    if (!allActivities.length){
+       next({ 
+        name: "Not Found",
+        message: `Activity ${activityId} not found`
+    }) } else{
+     
+        res.send(allActivities);
+     
+    }
+   
   } catch (error) {
     next(error);
   }
@@ -46,13 +54,10 @@ activitiesRouter.post("/", requireUser, async (req, res, next) => {
     });
   }
 
-  console.log("INSIDE ACTIVITIESPOST FUNCTION");
   try {
-    console.log("INSIDE THE TRY OF THAT");
     activityData.name = name;
     activityData.description = description;
     const activity = await createActivity(activityData);
-    console.log(activity, "DID WE CREATE IT?");
     if (activity) {
       res.send(activity);
     }
@@ -63,7 +68,6 @@ activitiesRouter.post("/", requireUser, async (req, res, next) => {
 // PATCH /api/activities/:activityId
 activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
   const { activityId } = req.params;
-  console.log(activityId, "ACTIVITYID")
   const { name, description } = req.body;
   const originalActivityId = await getActivityById(activityId);
   const orginalactivityName = await getActivityByName(name)

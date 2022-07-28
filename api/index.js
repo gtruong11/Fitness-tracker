@@ -42,13 +42,13 @@ router.use(async (req, res, next) => {
     }
   });
 
-  router.use((req, res, next) => {
-    if (req.user) {
-      console.log("User is set:", req.user);
-    }
+  // router.use((req, res, next) => {
+  //   if (req.user) {
+  //     console.log("User is set:", req.user);
+  //   }
   
-    next();
-  });
+  //   next();
+  // });
 
 router.use('/users', usersRouter);
 router.use('/activities', activitiesRouter);
