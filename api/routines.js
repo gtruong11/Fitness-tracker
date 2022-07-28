@@ -1,5 +1,6 @@
 const express = require('express');
-const { getAllPublicRoutines, createRoutine, getRoutineById, updateRoutine, getUserByUsername } = require('../db');
+const { getAllPublicRoutines, createRoutine, getRoutineById, updateRoutine, getUserByUsername, destroyRoutine, addActivityToRoutine, getRoutineActivitiesByRoutine } = require('../db');
+const { UserDoesNotExistError } = require('../errors');
 const routinesRouter = express.Router();
 const {requireUser} = require('./utils')
 // GET /api/routines
@@ -34,7 +35,6 @@ routinesRouter.patch('/:routineId', requireUser, async(req,res,next)=>{
     const { name, goal } = req.body;
     const {username} = req.user
     const updatedRoutine = await getRoutineById(routineId)
-    console.log(updatedRoutine, "line 36 show me the money")
     try {
         if(updatedRoutine.creatorId !== req.user.id){
             res.status(403)
@@ -57,7 +57,45 @@ routinesRouter.patch('/:routineId', requireUser, async(req,res,next)=>{
       }
   })
 // DELETE /api/routines/:routineId
+routinesRouter.delete('/:routineId', requireUser, async (req,res,next)=>{
+    const {routineId} = req.params;
+    const {username} = req.user
+    const routine = await getRoutineById(routineId);
+    try{
+        if (routine.creatorId !== req.user.id){
+            res.status(403)
+            next({
+                name:"User is not found",
+                message: `User ${username} is not allowed to delete On even days`
+            })}else{
+                const deleteRoutine = await destroyRoutine(routineId)
+                res.send(deleteRoutine)
+            }
+
+    }catch(error){
+        next(error)
+    }
+})
 
 // POST /api/routines/:routineId/activities
+routinesRouter.post(':routineId/activities', async (req,res,next)=>{
+    const {activityId, count, duration}= req.body
+    const {routineId} = req.params
+    
+    try{
+        const existingRoutines = await getRoutineActivitiesByRoutine({routineId})
+        if(existingRoutines){
+            next({
+                name: "stuff"
+                message: "stuff"
+            })
+        }
+        const newRoutine = await addActivityToRoutine({routineId, activityId,count,duration })
+        res.send(newRoutine)
+
+    }catch (error){
+        next(error)
+    }
+})
 
 module.exports = routinesRouter;
