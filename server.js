@@ -1,7 +1,7 @@
 const http = require("http")
 const chalk = require("chalk")
 const app = require("./app")
-const client = new Client(process.env.DATABASE_URL || 'postgres://localhost:5432/juicebox-dev');
+const client = (process.env.DATABASE_URL || 'postgres://localhost:5432/fitness-dev');
 
 const PORT = process.env["PORT"] ?? 3000
 const server = http.createServer(app)
