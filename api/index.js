@@ -12,8 +12,21 @@ const {getUserById} = require("../db")
 
 // GET /api/health
 router.get('/health', async (req, res, next) => {
-    res.send(console.log("all is well"))
+    try {
+    res.send({message: "all is well"})
+    } catch (error) {
+      next (error)
+    }
 });
+
+router.get('/unknown', async (req, res, next) => {
+  try {
+    res.status(404)
+    res.send({message: "error 404"})
+  } catch(error) {
+    next (error)
+  }
+})
 
 router.use(async (req, res, next) => {
     const prefix = "Bearer ";
